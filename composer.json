@@ -1,0 +1,58 @@
+{
+    "name": "grnspc/addressable",
+    "description": "Laravel Addressable is a polymorphic Laravel package, for addressbook management. You can add addresses to any eloquent model with ease.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nathan Robinson",
+            "email": "grnspc.dev@gmail.com"
+        },
+        {
+            "name": "Rinvex LLC",
+            "homepage": "https://rinvex.com",
+            "email": "help@rinvex.com"
+        }
+
+    ],
+    "require": {
+        "php": "^7.3.0 || ^8.0.0",
+        "illuminate/console": "^8.0.0 || ^9.0.0",
+        "illuminate/database": "^8.0.0 || ^9.0.0",
+        "illuminate/support": "^8.0.0 || ^9.0.0",
+        "jackpopp/geodistance": "^1.2.0"
+
+    },
+    "require-dev": {
+        "codedungeon/phpunit-result-printer": "^0.30.0",
+        "illuminate/container": "^8.0.0 || ^9.0.0",
+        "phpunit/phpunit": "^9.5.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "GrnSpc\\Addressable\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "GrnSpc\\Addressable\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
+    },
+    "config": {
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "optimize-autoloader": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "GrnSpc\\Addressable\\Providers\\AddressableServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
