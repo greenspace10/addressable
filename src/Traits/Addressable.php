@@ -50,7 +50,7 @@ trait Addressable
      */
     public function addresses(): MorphMany
     {
-        return $this->morphMany(config('addressable.models.address'), 'addressable');
+        return $this->morphMany(config('grnspc.addressable.models.address'), 'addressable', 'addressable_type', 'addressable_id');
     }
 
     /**
@@ -65,7 +65,7 @@ trait Addressable
      */
     public static function findByDistance($distance, $unit, $latitude, $longitude): Collection
     {
-        $addressModel = config('addressable.models.address');
+        $addressModel = config('grnspc.addressable.models.address');
         $records = (new $addressModel())->within($distance, $unit, $latitude, $longitude)->get();
 
         $results = [];

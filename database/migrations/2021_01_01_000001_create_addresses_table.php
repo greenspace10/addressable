@@ -10,7 +10,7 @@ class CreateAddressesTable extends Migration
 {
     public function up()
     {
-        Schema::create(config('addressable.tables.addresses'), function (Blueprint $table) {
+        Schema::create(config('grnspc.addressable.tables.addresses'), function (Blueprint $table) {
             // Columns
             $table->increments('id');
             $table->morphs('addressable');
@@ -37,6 +37,6 @@ class CreateAddressesTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists(config('addressable.tables.addresses'));
+        Schema::dropIfExists(config('grnspc.addressable.tables.addresses'));
     }
 }

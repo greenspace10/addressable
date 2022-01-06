@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace GrnSpc\Addressable\Providers;
 
 use GrnSpc\Addressable\Models\Address;
@@ -15,11 +13,14 @@ class AddressableServiceProvider extends ServiceProvider
     public function register()
     {
         // Merge config
-        $this->mergeConfigFrom(realpath(__DIR__.'/../../config/addressable.php'), 'addressable');
+        $this->mergeConfigFrom(realpath(__DIR__.'/../../config/addressable.php'), 'grnspc.addressable');
 
-        // Bind eloquent models to IoC container
-        $this->app->singleton('addressable.address', $addressModel = $this->app['config']['addressable.models.address']);
-        $addressModel === Address::class || $this->app->alias('addressable.address', Address::class);
+        $this->registerModels([
+            'grnspc.addressable.address' => Address::class,
+        ])
+        // // Bind eloquent models to IoC container
+        // $this->app->singleton('addressable.address', $addressModel = $this->app['config']['addressable.models.address']);
+        // $addressModel === Address::class || $this->app->alias('addressable.address', Address::class);
 
     }
 
