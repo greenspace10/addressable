@@ -1,6 +1,5 @@
-<?php
 
-declare(strict_types=1);
+<?php
 
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -10,9 +9,9 @@ class CreateAddressesTable extends Migration
 {
     public function up()
     {
-        Schema::create(config('grnspc.addressable.tables.addresses'), function (Blueprint $table) {
+        Schema::create(config('grnspc.addresses.tables.addresses'), function (Blueprint $table) {
             // Columns
-            $table->increments('id');
+            $table->id();
             $table->morphs('addressable');
             $table->string('label')->nullable();
             $table->string('given_name')->nullable();
@@ -37,6 +36,6 @@ class CreateAddressesTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists(config('grnspc.addressable.tables.addresses'));
+        Schema::dropIfExists(config('grnspc.addresses.tables.addresses'));
     }
 }

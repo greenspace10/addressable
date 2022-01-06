@@ -1,8 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
-namespace GrnSpc\Addressable\Traits;
+namespace Grnspc\Addresses\Traits;
 
 use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -50,7 +48,7 @@ trait Addressable
      */
     public function addresses(): MorphMany
     {
-        return $this->morphMany(config('grnspc.addressable.models.address'), 'addressable', 'addressable_type', 'addressable_id');
+        return $this->morphMany(config('grnspc.addresses.models.address'), 'addressable', 'addressable_type', 'addressable_id');
     }
 
     /**
@@ -65,7 +63,7 @@ trait Addressable
      */
     public static function findByDistance($distance, $unit, $latitude, $longitude): Collection
     {
-        $addressModel = config('grnspc.addressable.models.address');
+        $addressModel = config('grnspc.addresses.models.address');
         $records = (new $addressModel())->within($distance, $unit, $latitude, $longitude)->get();
 
         $results = [];

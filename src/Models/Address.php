@@ -1,8 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
-namespace GrnSpc\Addressable\Models;
+namespace Grnspc\Addresses\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -11,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * GrnSpc\Addressable\Models\Address.
+ * Grnspc\Addressable\Models\Address.
  *
  * @property int                                                $id
  * @property int                                                $addressable_id
@@ -36,34 +34,34 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Carbon\Carbon|null                                $updated_at
  * @property-read \Illuminate\Database\Eloquent\Model|\Eloquent $addressable
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address inCountry($countryCode)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address inLanguage($languageCode)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address isBilling()
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address isPrimary()
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address isShipping()
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address outside($distance, $measurement = null, $latitude = null, $longitude = null)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereAddressableId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereAddressableType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereCity($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereComplement($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereCountryCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereExtra($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereIsBilling($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereIsPrimary($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereIsShipping($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereLabel($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereLatitude($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereLongitude($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereLine1($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereLine2($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereNumber($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereOrganization($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address wherePostalCode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereState($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\GrnSpc\Addressable\Models\Address within($distance, $measurement = null, $latitude = null, $longitude = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address inCountry($countryCode)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address inLanguage($languageCode)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address isBilling()
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address isPrimary()
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address isShipping()
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address outside($distance, $measurement = null, $latitude = null, $longitude = null)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereAddressableId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereAddressableType($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereCity($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereComplement($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereCountryCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereExtra($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereIsBilling($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereIsPrimary($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereIsShipping($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereLabel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereLatitude($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereLongitude($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereLine1($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereLine2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereNumber($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereOrganization($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address wherePostalCode($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereState($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\Grnspc\Addresses\Models\Address within($distance, $measurement = null, $latitude = null, $longitude = null)
  * @mixin \Eloquent
  */
 class Address extends Model
@@ -154,7 +152,7 @@ class Address extends Model
     {
         parent::__construct($attributes);
 
-        $this->setTable(config('grnspc.addressable.tables.addresses'));
+        $this->setTable(config('grnspc.addresses.tables.addresses'));
     }
 
     /**
@@ -230,21 +228,32 @@ class Address extends Model
     }
 
     /**
+     * Get full name attribute.
+     *
+     * @return string
+     */
+    public function getFullNameAttribute(): string
+    {
+        return implode(' ', [$this->given_name, $this->family_name]);
+    }
+
+    /**
      * {@inheritdoc}
      */
-    protected static function boot()
+    protected static function booted()
     {
-        parent::boot();
-
         static::saving(function (self $address) {
-            $geocoding = config('grnspc.addressable.geocoding.enabled');
-            $geocoding_api_key = config('grnspc.addressable.geocoding.api_key');
+
+            // dd('here');
+            $geocoding = config('grnspc.addresses.geocoding.enabled');
+            $geocoding_api_key = config('grnspc.addresses.geocoding.api_key');
             if ($geocoding && $geocoding_api_key) {
                 $segments[] = $address->line_1;
                 $segments[] = sprintf('%s, %s %s', $address->city, $address->province, $address->postal_code);
                 $segments[] = country($address->country_code)->getName();
 
                 $query = str_replace(' ', '+', implode(', ', $segments));
+
                 $geocode = json_decode(file_get_contents(
                     "https://maps.google.com/maps/api/geocode/json?address={$query}&sensor=false&key={$geocoding_api_key}"
                 ));

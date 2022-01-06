@@ -14,7 +14,7 @@ return [
 
     // Addresses Models
     'models' => [
-        'address' => \GrnSpc\Addressable\Models\Address::class,
+        'address' => \Grnspc\Addresses\Models\Address::class,
     ],
 
     // Addresses Geocoding Options
