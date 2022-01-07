@@ -26,9 +26,11 @@ class CreateAddressesTable extends Migration
             $table->jsonb('extra')->nullable();
             $table->decimal('latitude', 10, 7)->nullable();
             $table->decimal('longitude', 10, 7)->nullable();
-            $table->boolean('is_primary')->default(false);
-            $table->boolean('is_billing')->default(false);
-            $table->boolean('is_shipping')->default(false);
+
+            foreach(config('grnspc.addresses.flags', ['primary', 'billing', 'shipping']) as $flag) {
+                $table->boolean('is_'. $flag)->default(false)->index();
+            }
+
             $table->timestamps();
             $table->softDeletes();
         });

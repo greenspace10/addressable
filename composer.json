@@ -50,7 +50,10 @@
         "laravel": {
             "providers": [
                 "Grnspc\\Addresses\\Providers\\AddressesServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "Address": "Grnspc\\Addresses\\Facades\\Address"
+            }
         }
     },
     "minimum-stability": "dev",

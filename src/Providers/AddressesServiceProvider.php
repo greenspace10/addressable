@@ -129,7 +129,9 @@ class AddressesServiceProvider extends ServiceProvider
      */
     protected function registerModels(array $models): void
     {
+        // dd($models);
         foreach ($models as $service => $class) {
+            // dd($this->app['config'][Str::replaceLast('.', '.models.', $service)]);
             $this->app->singleton($service, $model = $this->app['config'][Str::replaceLast('.', '.models.', $service)]);
             $model === $class || $this->app->alias($service, $class);
         }

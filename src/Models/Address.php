@@ -88,9 +88,6 @@ class Address extends Model
         'extra',
         'latitude',
         'longitude',
-        'is_primary',
-        'is_billing',
-        'is_shipping',
     ];
 
     /**
@@ -112,35 +109,7 @@ class Address extends Model
         'extra' => 'array',
         'latitude' => 'float',
         'longitude' => 'float',
-        'is_primary' => 'boolean',
-        'is_billing' => 'boolean',
-        'is_shipping' => 'boolean',
         'deleted_at' => 'datetime',
-    ];
-
-    /**
-     * The default rules that the model will validate against.
-     *
-     * @var array
-     */
-    protected $rules = [
-        'addressable_id' => 'required|integer',
-        'addressable_type' => 'required|string|strip_tags|max:150',
-        'label' => 'nullable|string|strip_tags|max:150',
-        'given_name' => 'nullable|string|strip_tags|max:150',
-        'family_name' => 'nullable|string|strip_tags|max:150',
-        'organization' => 'nullable|string|strip_tags|max:150',
-        'line_1' => 'nullable|string|strip_tags|max:255',
-        'line_2' => 'nullable|string|strip_tags|max:255',
-        'city' => 'nullable|string|strip_tags|max:150',
-        'province' => 'nullable|string|strip_tags|max:150',
-        'postal_code' => 'nullable|string|strip_tags|max:150',
-        'country_code' => 'nullable|alpha|size:2|country',
-        'latitude' => 'nullable|numeric',
-        'longitude' => 'nullable|numeric',
-        'is_primary' => 'sometimes|boolean',
-        'is_billing' => 'sometimes|boolean',
-        'is_shipping' => 'sometimes|boolean',
     ];
 
     /**
@@ -152,7 +121,61 @@ class Address extends Model
     {
         parent::__construct($attributes);
 
-        $this->setTable(config('grnspc.addresses.tables.addresses'));
+        $this->table = config('grnspc.addresses.tables.addresses', 'addresses');
+        $this->updateFillables();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected static function booted()
+    {
+        static::saving(function (self $address) {
+            if (config('grnspc.addresses.geocoding.enabled')) {
+                $address->geocode();
+            }
+        });
+    }
+
+    /**
+     * Update fillable fields dynamically.
+     *
+     * @return void.
+     */
+    private function updateFillables()
+    {
+        $fillable = $this->fillable;
+        $columns  = preg_filter('/^/', 'is_', config('grnspc.addresses.flags', ['primary', 'billing', 'shipping']));
+
+        $this->fillable(array_merge($fillable, $columns));
+    }
+
+    /**
+     * Get the validation rules.
+     *
+     * @return array
+     */
+    public static function getValidationRules(): array
+    {
+        $rules = config('grnspc.addresses.rules', [
+            'label'             => ['nullable', 'string', 'max:150'],
+            'given_name'        => ['nullable', 'string', 'max:150'],
+            'family_name'       => ['nullable', 'string', 'max:150'],
+            'organization'      => ['nullable', 'string', 'max:150'],
+            'line_1'            => ['required', 'string', 'max:255'],
+            'line_2'            => ['nullable', 'string', 'max:255'],
+            'city'              => ['required', 'string', 'max:150'],
+            'province'          => ['required', 'string', 'max:150'],
+            'postal_code'       => ['required', 'string', 'max:150'],
+            'country_code'      => ['required', 'alpha', 'size:2', 'country'],
+            'latitude'          => ['nullable', 'numeric'],
+            'longitude'         => ['nullable', 'numeric'],
+        ]);
+
+        foreach (config('grnspc.addresses.flags', ['primary', 'billing', 'shipping']) as $flag)
+            $rules['is_' . $flag] = ['boolean'];
+
+        return $rules;
     }
 
     /**
@@ -237,32 +260,114 @@ class Address extends Model
         return implode(' ', [$this->given_name, $this->family_name]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected static function booted()
+    public function geocode(): self
     {
-        static::saving(function (self $address) {
+        $geocoding_api_key = config('grnspc.addresses.geocoding.api_key');
 
-            // dd('here');
-            $geocoding = config('grnspc.addresses.geocoding.enabled');
-            $geocoding_api_key = config('grnspc.addresses.geocoding.api_key');
-            if ($geocoding && $geocoding_api_key) {
-                $segments[] = $address->line_1;
-                $segments[] = sprintf('%s, %s %s', $address->city, $address->province, $address->postal_code);
-                $segments[] = country($address->country_code)->getName();
+        if (!($query = $this->getQueryString()) && !$geocoding_api_key)
+            return $this;
 
-                $query = str_replace(' ', '+', implode(', ', $segments));
+        $url = "https://maps.google.com/maps/api/geocode/json?address={$query}&sensor=false&key={$geocoding_api_key}";
 
-                $geocode = json_decode(file_get_contents(
-                    "https://maps.google.com/maps/api/geocode/json?address={$query}&sensor=false&key={$geocoding_api_key}"
-                ));
+        if ($geocode = file_get_contents($url)) {
+            $output = json_decode($geocode);
 
-                if (count($geocode->results)) {
-                    $address->latitude = $geocode->results[0]->geometry->location->lat;
-                    $address->longitude = $geocode->results[0]->geometry->location->lng;
+            if (count($output->results) && isset($output->results[0])) {
+                if ($geo = $output->results[0]->geometry) {
+                    $this->latitude = $geo->location->lat;
+                    $this->longitude = $geo->location->lng;
                 }
             }
-        });
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get the encoded query string.
+     *
+     * @return string
+     */
+    public function getQueryString(): string
+    {
+        $query = [];
+
+        $query[] = $this->line_1                            ?: '';
+        //  $query[] = $this->line_2                        ?: '';
+        $query[] = $this->city                              ?: '';
+        $query[] = $this->province                          ?: '';
+        $query[] = $this->postal_code                       ?: '';
+        $query[] = country($this->country_code)->getName()  ?: '';
+
+        $query = trim(implode(',', array_filter($query)));
+
+        return urlencode($query);
+    }
+
+
+    /**
+     * Get the address as array.
+     *
+     * @return array
+     */
+    public function getArray(): array
+    {
+        $address = $one = $two = [];
+
+        $one[] = $this->line_1       ?: '';
+        $one[] = $this->line_2       ?: '';
+
+        $two[] = $this->city            ?: '';
+        $two[] = $this->province        ?: '';
+        $two[] = $this->postal_code     ?: '';
+
+        $address[] = implode(', ', array_filter($one));
+        $address[] = implode(' ', array_filter($two));
+        $address[] = country($this->country_code)->getName() ?: '';
+
+        if (count($address = array_filter($address)) > 0)
+            return $address;
+
+        return [];
+    }
+
+    /**
+     * Get the address as html block.
+     *
+     * @return string
+     */
+    public function getHtml(): string
+    {
+        if ($address = $this->getArray())
+            return '<address>' . implode('<br />', array_filter($address)) . '</address>';
+
+        return '';
+    }
+
+    /**
+     * Get the address as a simple line.
+     *
+     * @param  string  $glue
+     * @return string
+     */
+    public function getLine($glue = ', '): string
+    {
+        if ($address = $this->getArray())
+            return implode($glue, array_filter($address));
+
+        return '';
+    }
+
+    /**
+     * Get the country name.
+     *
+     * @return string
+     */
+    public function getCountryNameAttribute(): string
+    {
+        if ($this->country_code)
+            return country($this->country_code)->getName();
+
+        return '';
     }
 }
