@@ -68,6 +68,19 @@ trait HasAddresses
         return $this->addresses()->latest()->first();
     }
 
+    public function getShippingAddressAttribute()
+    {
+        $addresses = $this->addresses();
+
+        if ($addresses->count() === 1)
+            return $addresses->first();
+
+        if ($addresses->isShipping()->count())
+            return $addresses->firstWhere('is_shipping', true);
+
+        return $this->addresses()->latest()->first();
+    }
+
     /**
      * Boot the addressable trait for the model.
      *
