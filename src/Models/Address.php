@@ -69,6 +69,12 @@ class Address extends Model
     use GeoDistanceTrait;
     use SoftDeletes;
 
+    protected const FLAGS = [
+        'primary',
+        'billing',
+        'shipping'
+    ];
+
     /**
      * {@inheritdoc}
      */
@@ -144,10 +150,8 @@ class Address extends Model
      */
     private function updateFillables()
     {
-        $fillable = $this->fillable;
-        $columns  = preg_filter('/^/', 'is_', config('grnspc.addresses.flags', ['primary', 'billing', 'shipping']));
-
-        $this->fillable(array_merge($fillable, $columns));
+        $columns  = preg_filter('/^/', 'is_', config('grnspc.addresses.flags', self::FLAGS));
+        $this->mergeFillable($columns);
     }
 
     /**
@@ -172,7 +176,7 @@ class Address extends Model
             'longitude'         => ['nullable', 'numeric'],
         ]);
 
-        foreach (config('grnspc.addresses.flags', ['primary', 'billing', 'shipping']) as $flag)
+        foreach (config('grnspc.addresses.flags', self::FLAGS) as $flag)
             $rules['is_' . $flag] = ['boolean'];
 
         return $rules;
@@ -222,6 +226,18 @@ class Address extends Model
     public function scopeIsShipping(Builder $builder): Builder
     {
         return $builder->where('is_shipping', true);
+    }
+
+    /**
+     * Scope shipping addresses.
+     *
+     * @param \Illuminate\Database\Eloquent\Builder $builder
+     *
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeIsSite(Builder $builder): Builder
+    {
+        return $builder->where('is_site', true);
     }
 
     /**
